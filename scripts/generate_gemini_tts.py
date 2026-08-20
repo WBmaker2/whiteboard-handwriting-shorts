@@ -11,6 +11,8 @@ import time
 import wave
 from pathlib import Path
 
+from environment_checks import ensure_supported_python
+
 DEFAULT_MODEL = "gemini-3.1-flash-tts-preview"
 DEFAULT_VOICE = "Vindemiatrix"
 DEFAULT_STYLE = "초등학생에게 설명하는 친절하고 차분한 한국어 교사, 또박또박, 보통보다 약간 느리게, 과장 없이"
@@ -114,6 +116,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    try:
+        ensure_supported_python()
+    except RuntimeError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+        return 2
     args = parse_args()
     if not args.script.is_file():
         print(f"[error] 원고 파일이 없습니다: {args.script}", file=sys.stderr)

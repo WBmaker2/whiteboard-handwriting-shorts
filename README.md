@@ -74,6 +74,9 @@ $whiteboard-handwriting-shorts를 사용해 이 자료로 1분 교육용 화이�
 
 자세한 운영 규칙은 [SKILL.md](SKILL.md), 최초 실행 절차는 [references/runtime-bootstrap.md](references/runtime-bootstrap.md)를 확인하세요.
 
+운영체제별 Python·Git·FFmpeg 설치, Gemini API 키 발급, 환경변수 등록, 비밀값을 출력하지 않는 확인 명령,
+설치 실패 재시도 절차는 [references/environment-setup.md](references/environment-setup.md)에 정리했습니다.
+
 ## 요구 환경
 
 - Python 3.10 이상
@@ -82,10 +85,29 @@ $whiteboard-handwriting-shorts를 사용해 이 자료로 1분 교육용 화이�
 - 영상 렌더링용 Python 패키지: `opencv-python`, `numpy`, `av`, `Pillow`
 - Gemini TTS 사용 시 `google-genai`와 `GEMINI_API_KEY` 또는 `GOOGLE_API_KEY`
 
-필요한 Python 패키지는 사용자 승인 후 다음 명령으로 스킬 전용 `.venv`에 준비할 수 있습니다.
+실행 전 Python과 시스템 도구를 확인합니다. Python 3.10 미만이거나 Git·FFmpeg·FFprobe가 없으면 공식 설치
+안내를 확인한 뒤 다시 점검합니다. macOS/Linux에서 `python` 명령이 없으면 아래 명령의 `python`을 `python3`로,
+Windows PowerShell에서는 `py`로 바꿔 실행합니다.
 
 ```bash
-python scripts/prepare_env.py
+python scripts/check_environment.py --check
+```
+
+필요한 Python 패키지는 계획을 먼저 확인하고 사용자 승인 후 스킬 전용 `.venv`에 준비합니다.
+
+```bash
+python scripts/prepare_env.py --check
+python scripts/prepare_env.py --plan
+python scripts/prepare_env.py --apply --approved
+python scripts/prepare_env.py --check
+```
+
+Gemini TTS를 사용할 때는 [Google AI Studio API Keys](https://aistudio.google.com/apikey)에서 키를 발급하고
+`GEMINI_API_KEY` 또는 `GOOGLE_API_KEY`로 등록합니다. 키를 출력하지 않고 등록 여부만 확인하려면 다음을
+실행합니다.
+
+```bash
+python scripts/check_environment.py --check-key
 ```
 
 API 키는 저장소나 산출물에 기록하지 마세요.
@@ -95,6 +117,8 @@ API 키는 저장소나 산출물에 기록하지 마세요.
 ```bash
 python -m compileall -q scripts
 uv run --with ruff ruff check --select E4,E7,E9,F,I scripts
+python scripts/check_environment.py --check
+python scripts/test_environment_checks.py
 python scripts/test_bootstrap_runtime.py
 uv run --with pyyaml python scripts/validate_distribution.py
 ```

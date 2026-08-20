@@ -6,6 +6,15 @@ import json
 import sys
 from pathlib import Path
 
+from environment_checks import ensure_supported_python
+
+try:
+    ensure_supported_python()
+except RuntimeError as error:
+    print(f"[error] {error}", file=sys.stderr)
+    print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+    raise SystemExit(2)
+
 import av
 import cv2
 import numpy as np
@@ -238,6 +247,12 @@ def render(args: argparse.Namespace):
 
 
 def main() -> int:
+    try:
+        ensure_supported_python()
+    except RuntimeError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+        return 2
     args = parse_args()
     if args.duration_ms < 500 or args.fps < 1 or args.width < 2 or args.height < 2:
         print("[error] duration, fps, width, height 값을 확인하세요.", file=sys.stderr)

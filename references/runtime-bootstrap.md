@@ -15,6 +15,23 @@ Git LFS의 대용량 테스트 미디어 다운로드를 생략한다.
 
 ## 실행 흐름
 
+### 0. 운영체제와 Python 사전 점검
+
+설치 방법과 Gemini 키 발급·환경변수 등록은 [실행 환경 안내](environment-setup.md)를 따른다. 저장소 준비 전에
+다음 명령으로 Python 3.10 이상과 Git·FFmpeg·FFprobe를 확인한다.
+
+```bash
+python <SKILL_DIR>/scripts/check_environment.py --check
+```
+
+점검이 실패하면 운영체제별 설치 안내를 사용자에게 보여주고 중단한다. 시스템 도구를 자동 설치하거나
+사용자의 PATH를 자동 수정하지 않는다. Gemini 키는 TTS 단계에서만 필요하며 다음 명령은 키 값을 출력하지 않고
+등록 여부만 확인한다.
+
+```bash
+python <SKILL_DIR>/scripts/check_environment.py --check-key
+```
+
 ### 1. 읽기 전용 확인
 
 ```bash

@@ -3,6 +3,8 @@
 ## Secrets
 
 Gemini API 키는 `GEMINI_API_KEY` 또는 `GOOGLE_API_KEY` 환경변수로만 제공합니다. 키를 이 저장소, 영상 프로젝트, 로그, 이슈 또는 테스트 파일에 기록하지 마세요.
+발급과 운영체제별 등록 방법은 [실행 환경 안내](references/environment-setup.md)를 따르고, 등록 확인에는 키 값을
+출력하지 않는 `python scripts/check_environment.py --check-key`를 사용하세요.
 
 ## Dependency bootstrap
 

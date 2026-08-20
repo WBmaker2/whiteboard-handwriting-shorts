@@ -9,7 +9,19 @@ description: "Create a fact-checked Korean educational vertical whiteboard Short
 
 ## 0단계: 최초 실행 환경 준비
 
-영상 아이디어나 프로젝트 폴더를 만들기 전에 [최초 실행 준비 절차](references/runtime-bootstrap.md)를 읽고 다음 검사를 실행한다.
+영상 아이디어나 프로젝트 폴더를 만들기 전에 [실행 환경 안내](references/environment-setup.md)와
+[최초 실행 준비 절차](references/runtime-bootstrap.md)를 읽는다. 먼저 운영체제별 설치 안내를 제공하고
+다음 읽기 전용 점검을 실행한다.
+
+```bash
+python <SKILL_DIR>/scripts/check_environment.py --check
+```
+
+macOS/Linux에서 `python` 명령을 찾지 못하면 `python3`로, Windows PowerShell에서는 `py`로 같은 명령을
+실행한다.
+
+Python 3.10 미만이거나 Git·FFmpeg·FFprobe가 없으면 점검 결과와 해당 운영체제의 공식 설치 방법을 사용자에게
+보여주고 중단한다. 설치 후 새 터미널에서 점검을 다시 통과해야 한다. 시스템 도구는 자동 설치하지 않는다.
 
 ```bash
 python <SKILL_DIR>/scripts/bootstrap_runtime.py --check
@@ -37,6 +49,9 @@ python <SKILL_DIR>/scripts/bootstrap_runtime.py --check
    배포 시에는 [제3자 구성요소 고지](references/third-party-notices.md)와 `references/licenses/`를 함께 포함한다.
 7. 누락·변경·손상이 발견되면 자동으로 pull, reset, 삭제, 덮어쓰지 않는다. 변경 내용과 복구 계획을 보여주고 다시 승인받은 뒤 `--repair --approved --hand-variant <승인된 종류>`를 실행한다.
 8. 사용자가 필수 다운로드를 승인하지 않으면 손그림 동영상 제작을 시작하지 않는다. 0단계 승인은 머신별 환경 승인으로, 아래 콘텐츠 1~6단계 승인과 별개다.
+
+Python 패키지는 최초 실행 또는 TTS 단계에서 별도로 계획·승인을 받는다. `google-genai`를 포함한 스킬 전용
+`.venv` 패키지만 자동 적용 대상이며, 시스템 Python·Git·FFmpeg는 자동 설치 대상이 아니다.
 
 ## 승인 게이트 불변 규칙
 
@@ -123,12 +138,27 @@ python <SKILL_DIR>/scripts/init_video_project.py \
 
 승인된 `planning/narration.txt`만 낭독시킨다. 사용자가 지정하지 않으면 차분하고 친절한 한국어 교사 톤, 보통보다 약간 느린 속도, 과장 없는 감정으로 지시한다. `GEMINI_API_KEY` 또는 `GOOGLE_API_KEY`를 사용하고 키를 출력하거나 파일에 저장하지 않는다.
 
-먼저 환경을 준비한 뒤 TTS 스크립트를 실행한다.
+키가 없다면 [Gemini API 키 발급 및 환경변수 안내](references/environment-setup.md)를 보여주고 사용자가 직접
+발급·등록하도록 한다. 키 값은 요청하거나 출력하지 않는다. 등록 여부는 다음처럼 값 없이 확인한다.
 
 ```bash
-python <SKILL_DIR>/scripts/prepare_env.py
+python <SKILL_DIR>/scripts/check_environment.py --check-key
+```
+
+Python 패키지는 아래 순서로 준비한다. `--plan` 결과를 사용자에게 먼저 보여주고, 사용자가 승인한 경우에만
+`--apply --approved`를 실행한다.
+
+```bash
+python <SKILL_DIR>/scripts/prepare_env.py --check
+python <SKILL_DIR>/scripts/prepare_env.py --plan
+python <SKILL_DIR>/scripts/prepare_env.py --apply --approved
+python <SKILL_DIR>/scripts/prepare_env.py --check
 <ENV_PY> <SKILL_DIR>/scripts/generate_gemini_tts.py planning/narration.txt --wav audio/voiceover.wav --mp3 audio/voiceover.mp3
 ```
+
+패키지 설치가 실패하면 `.venv`나 저장소를 삭제하지 않는다. 네트워크·권한·디스크 공간을 확인하고
+`--check` → `--plan` → 사용자 재승인 → `--apply --approved` 순서로 재시도한다. 반복 실패 시 오류 내용을
+사용자에게 보여주고 다음 조치를 협의한 뒤 TTS를 중단한다.
 
 오디오 길이, 코덱, 샘플레이트와 생성 설정을 `logs/05-tts-validation.txt`에 기록하되 API 키는 기록하지 않는다. 목표 45~60초를 벗어나면 원고를 몰래 고치지 말고 조정안을 제안한다. 원고가 바뀌면 2단계 승인을 다시 받고, 영향받은 3단계와 이후 단계를 갱신한다. 음성 파일을 재생 가능하게 보여주고 사용자에게 음색·속도·발음 승인을 요청한 뒤 멈춘다.
 

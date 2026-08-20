@@ -16,6 +16,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from environment_checks import ensure_supported_python
 from runtime_sources import write_sources
 
 SCHEMA_VERSION = 1
@@ -117,14 +118,17 @@ def command_version(name: str) -> dict[str, str] | None:
     executable = shutil.which(name)
     if not executable:
         return None
+    version_flag = "-version" if name in {"ffmpeg", "ffprobe"} else "--version"
     result = subprocess.run(
-        [executable, "--version"],
+        [executable, version_flag],
         text=True,
         capture_output=True,
         timeout=20,
         check=False,
     )
     output = result.stdout.strip() or result.stderr.strip()
+    if result.returncode != 0:
+        return None
     return {"path": executable, "version": output.splitlines()[0] if output else "unknown"}
 
 
@@ -431,6 +435,12 @@ def apply_setup(root: Path, urls: dict[str, str], hand_variant: str) -> dict[str
 
 
 def main() -> int:
+    try:
+        ensure_supported_python()
+    except RuntimeError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+        return 2
     args = parse_args()
     root = runtime_root(args.install_root)
     urls = expected_urls(

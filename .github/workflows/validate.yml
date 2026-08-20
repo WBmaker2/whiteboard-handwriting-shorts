@@ -41,11 +41,17 @@ jobs:
           ffmpeg -version
           ffprobe -version
 
+      - name: Check skill environment
+        run: python scripts/check_environment.py --check
+
       - name: Compile Python scripts
         run: python -m compileall -q scripts
 
       - name: Lint Python scripts
         run: ruff check --select E4,E7,E9,F,I scripts
+
+      - name: Run environment checks
+        run: python scripts/test_environment_checks.py
 
       - name: Run bootstrap integration tests
         run: python scripts/test_bootstrap_runtime.py

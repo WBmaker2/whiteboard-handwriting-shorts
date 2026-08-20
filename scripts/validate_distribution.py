@@ -20,11 +20,16 @@ REQUIRED_FILES = (
     ".github/workflows/validate.yml",
     "assets/drawing-hand.png",
     "agents/openai.yaml",
+    "references/environment-setup.md",
     "references/runtime-bootstrap.md",
     "references/third-party-notices.md",
     "references/licenses/HYPERFRAMES-APACHE-2.0.txt",
     "references/licenses/SRT-WHITEBOARD-ANIMATION-MIT.txt",
     "scripts/bootstrap_runtime.py",
+    "scripts/check_environment.py",
+    "scripts/environment_checks.py",
+    "scripts/prepare_env.py",
+    "scripts/test_environment_checks.py",
     "scripts/test_bootstrap_runtime.py",
 )
 OFFICIAL_URLS = (

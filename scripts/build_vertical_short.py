@@ -9,6 +9,15 @@ import sys
 import tempfile
 from pathlib import Path
 
+from environment_checks import ensure_supported_python
+
+try:
+    ensure_supported_python()
+except RuntimeError as error:
+    print(f"[error] {error}", file=sys.stderr)
+    print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+    raise SystemExit(2)
+
 from bootstrap_runtime import SetupError, require_ready_state
 from PIL import Image, ImageDraw, ImageFont
 
@@ -333,6 +342,12 @@ def compose(
 
 
 def main() -> int:
+    try:
+        ensure_supported_python()
+    except RuntimeError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.", file=sys.stderr)
+        return 2
     args = parse_args()
     try:
         require_ready_state(args.setup_state)

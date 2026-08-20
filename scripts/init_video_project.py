@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from bootstrap_runtime import SetupError, project_runtime_snapshot, require_ready_state
+from environment_checks import ensure_supported_python
 
 SUBDIRECTORIES = (
     "input",
@@ -151,6 +152,12 @@ def write_source_index(path: Path, entries: list[dict[str, str]]) -> None:
 
 
 def main() -> int:
+    try:
+        ensure_supported_python()
+    except RuntimeError as error:
+        print(f"[error] {error}")
+        print("먼저 references/environment-setup.md의 Python 설치 방법을 확인하세요.")
+        return 2
     args = parse_args()
     now = datetime.now().astimezone()
     date_prefix = validate_date(args.date, now)
