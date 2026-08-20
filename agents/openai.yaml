@@ -1,0 +1,4 @@
+interface:
+  display_name: "whiteboard-handwriting-shorts"
+  short_description: "공식 저장소 준비와 단계별 승인으로 교육용 손그림 숏츠 제작"
+  default_prompt: "$whiteboard-handwriting-shorts를 사용해 최초 환경 준비와 각 단계 승인을 거쳐 제공 자료로 1분 교육용 화이트보드 숏츠를 제작해 주세요."
